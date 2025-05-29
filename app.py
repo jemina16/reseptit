@@ -8,6 +8,21 @@ import db
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
+@app.route("/new_item")
+def new_item():
+    return render_template("new_item.html")
+
+@app.route("/create_item", methods=["POST"])
+def create_item():
+    title = request.form["title"]
+    description = request.form["description"]
+    user_id = session["user_id"]
+
+    sql = """INSERT INTO items (title, description, user_id) VALUES (?, ?, ?)"""
+    db.execute(sql, [title, description, user_id])
+
+    return redirect("/")
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -37,14 +52,19 @@ def create():
 def login():
     if request.method == "GET":
         return render_template("login.html")
+    
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
 
-        sql = "SELECT password_hash FROM users WHERE username = ?"
-        password_hash = db.query(sql, [username])[0][0]
+        sql = "SELECT id, password_hash FROM users WHERE username = ?"
+        result = db.query(sql, [username])[0]
+        user_id = result["id"]
+        password_hash = result["password_hash"]
+       # password_hash = db.query(sql, [username])[0][0]
 
         if check_password_hash(password_hash, password):
+            session["user_id"] = user_id
             session["username"] = username
             return redirect("/")
         else:
@@ -52,5 +72,6 @@ def login():
 
 @app.route("/logout")
 def logout():
+    del session["user_id"]
     del session["username"]
     return redirect("/")
