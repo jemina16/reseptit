@@ -9,6 +9,16 @@ import items
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
+@app.route("/")
+def index():
+    all_items = items.get_items()
+    return render_template("index.html", items=all_items)
+
+@app.route("/item/<int:item_id>")
+def show_item(item_id):
+    item = items.get_item(item_id)
+    return render_template("show_item.html", item=item)
+
 @app.route("/new_item")
 def new_item():
     return render_template("new_item.html")
@@ -22,11 +32,6 @@ def create_item():
     items.add_item(title, description, user_id)
 
     return redirect("/")
-
-@app.route("/")
-def index():
-
-    return render_template("index.html")
 
 @app.route("/register")
 def register():
