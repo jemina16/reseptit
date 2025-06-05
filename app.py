@@ -45,7 +45,11 @@ def create_item():
     require_login()
 
     title = request.form["title"]
+    if not title or len(title) > 50:
+        abort(403)
     description = request.form["description"]
+    if not description or len(description) > 2000:
+        abort(403)
     user_id = session["user_id"]
 
     items.add_item(title, description, user_id)
