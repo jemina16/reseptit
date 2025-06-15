@@ -29,7 +29,20 @@
     </ul>
   </div>
   {% endif %}
-   <p>
+  <h2>Kommentit</h2>
+  <ul>
+    {% for comment in comments %}
+    <li>{{ comment.note }}, <a href="/user/{{ comment.user_id}}">{{ comment.username }}</a></li>
+    {% endfor %}
+  </ul>
+  <h2>Uusi kommentti</h2>
+  <form action="/create_comment" method="post">
+      <input type="text" name="note" id="note" size="50" required />
+      <input type="hidden" name="item_id" value="{{ item.id }}" >      
+      <input type="submit" value="Lisää kommentti" />
+  </form>
+  
+  <p>
     <a href="/">Palaa etusivulle</a>
   </p>
 </body>
