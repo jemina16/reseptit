@@ -11,8 +11,14 @@
   <p>
     <a href="/edit_item/{{ item.id }}">Muokkaa</a>
     <a href="/remove_item/{{ item.id }}">Poista</a>
+    <a href="/images/{{ item.id }}">Kuvat</a>
   </p>
   {% endif %}
+  {% if images %}
+      {% for image in images %}
+      <img src="/image/{{ image.id }}" alt="Ilmoituksen kuva" />
+      {% endfor %}
+  {% endif %}  
   <p>
     {{ item.description }}
   </p>
@@ -29,12 +35,16 @@
     </ul>
   </div>
   {% endif %}
-  <h2>Kommentit</h2>
-  <ul>
-    {% for comment in comments %}
-    <li>{{ comment.note }}, <a href="/user/{{ comment.user_id}}">{{ comment.username }}</a></li>
-    {% endfor %}
-  </ul>
+  {% if comments %}
+  <div>
+    Kommentit:
+    <ul>
+      {% for comment in comments %}
+      <li>{{ comment.note }}, <a href="/user/{{ comment.user_id}}">{{ comment.username }}</a></li>
+      {% endfor %}
+    </ul>
+   </div>
+   {% endif %}
   <h2>Uusi kommentti</h2>
   <form action="/create_comment" method="post">
       <input type="text" name="note" id="note" size="50" required />
