@@ -195,6 +195,8 @@ def update_item():
     if not description or len(description) > 2000:
         abort(403)
 
+    all_classes = items.get_all_classes()
+    
     classes = []
     for entry in request.form.getlist("classes"):
         if entry:
