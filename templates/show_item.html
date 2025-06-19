@@ -13,11 +13,11 @@
 {% endif %}
 {% if images %}
     {% for image in images %}
-    <img src="/image/{{ image.id }}" alt="Ilmoituksen kuva" />
+    <img src="/image/{{ image.id }}" alt="Reseptin kuva" />
     {% endfor %}
 {% endif %}  
 <p>
-  {{ item.description }}
+  {{ item.description | show_lines }}
 </p>
 <ul>
   <li>Reseptin lisääjä: <a href="/user/{{ item.user_id }}">{{ item.username }}</a></li>
