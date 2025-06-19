@@ -41,7 +41,8 @@
 <h3>Uusi kommentti</h3>
 <form action="/create_comment" method="post">
     <input type="text" name="note" id="note" size="50" required />
-    <input type="hidden" name="item_id" value="{{ item.id }}" >      
+    <input type="hidden" name="item_id" value="{{ item.id }}" >
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />      
     <input type="submit" value="Lisää kommentti" />
 </form>
 {% endif %}
