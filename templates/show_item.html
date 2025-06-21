@@ -28,14 +28,12 @@
 {% endif %}
 </ul>
 {% if comments %}
-<div>
-  Kommentit:
-  <ul>
-    {% for comment in comments %}
-    <li>{{ comment.note }}, <a href="/user/{{ comment.user_id}}">{{ comment.username }}</a></li>
-    {% endfor %}
-  </ul>
-</div>
+<h3>Kommentit:</h3>
+<ul>
+  {% for comment in comments %}
+  <li>{{ comment.note }} | <a href="/user/{{ comment.user_id}}">{{ comment.username }}</a></li>
+  {% endfor %}
+</ul>
 {% endif %}
 {% if session.user_id %}
 <h3>Uusi kommentti</h3>
