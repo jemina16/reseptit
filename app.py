@@ -37,8 +37,8 @@ def show_user(user_id):
     user = users.get_user(user_id)
     if not user:
         abort(404)
-    items = users.get_items(user_id)
-    return render_template("show_user.html", user=user, items=items)
+    user_items = users.get_items(user_id)
+    return render_template("show_user.html", user=user, items=user_items)
 
 @app.route("/find_item")
 def find_item():
@@ -58,7 +58,8 @@ def show_item(item_id):
     classes = items.get_classes(item_id)
     comments = items.get_comments(item_id)
     images = items.get_images(item_id)
-    return render_template("show_item.html", item=item, classes=classes, comments=comments, images=images)
+    return render_template("show_item.html", item=item, classes=classes,
+                           comments=comments, images=images)
 
 @app.route("/image/<int:image_id>")
 def show_image(image_id):
@@ -100,7 +101,7 @@ def create_item():
             if class_value not in all_classes[class_title]:
                 abort(403)
             classes.append((class_title, class_value))
-  
+
     items.add_item(title, description, user_id, classes)
 
     item_id = db.last_insert_id()
@@ -118,8 +119,6 @@ def create_comment():
     if not item:
         abort(404)
     user_id = session["user_id"]
-
-    all_classes = items.get_all_classes()
 
     items.add_comment(item_id, user_id, note)
 
@@ -153,7 +152,7 @@ def edit_images(item_id):
         abort(403)
 
     images = items.get_images(item_id)
-    
+
     return render_template("images.html", item=item, images=images)
 
 @app.route("/add_image", methods=["POST"])
@@ -170,12 +169,12 @@ def add_image():
 
     file = request.files["image"]
     if not file.filename.endswith(".png"):
-        flash ("VIRHE: väärä tiedostomuoto")
+        flash("VIRHE: väärä tiedostomuoto")
         return redirect("/images/" + str(item_id))
 
     image = file.read()
     if len(image) > 300 * 1024:
-        flash ("VIRHE: liian suuri kuva")
+        flash("VIRHE: liian suuri kuva")
         return redirect("/images/" + str(item_id))
 
     items.add_image(item_id, image)
@@ -192,12 +191,12 @@ def remove_images():
         abort(404)
     if item["user_id"] != session["user_id"]:
         abort(403)
-    
+
     for image_id in request.form.getlist("image_id"):
         items.remove_images(item_id, image_id)
 
     return redirect("/images/" + str(item_id))
-    
+
 @app.route("/update_item", methods=["POST"])
 def update_item():
     require_login()
@@ -236,24 +235,22 @@ def update_item():
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
 def remove_item(item_id):
     require_login()
-    
+
     item = items.get_item(item_id)
     if not item:
-        abort(404)    
+        abort(404)
     if item["user_id"] != session["user_id"]:
         abort(403)
 
     if request.method == "GET":
         return render_template("remove_item.html", item=item)
-    
+
     if request.method == "POST":
         check_csrf()
         if "remove" in request.form:
             items.remove_item(item_id)
             return redirect("/")
-        else:
-            return redirect("/item/" + str(item_id)) 
-
+        return redirect("/item/" + str(item_id))
 
 @app.route("/register")
 def register():
@@ -267,7 +264,7 @@ def create():
     if password1 != password2:
         flash("VIRHE: salasanat eivät ole samat")
         return redirect("/register")
-    
+
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
@@ -280,7 +277,7 @@ def create():
 def login():
     if request.method == "GET":
         return render_template("login.html")
-    
+
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]

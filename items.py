@@ -9,7 +9,7 @@ def get_all_classes():
         classes[title] = []
     for title, value in result:
         classes[title].append(value)
-        
+
     return classes
 
 def add_item(title, description, user_id, classes):
@@ -19,8 +19,8 @@ def add_item(title, description, user_id, classes):
     item_id = db.last_insert_id()
 
     sql = "INSERT INTO item_classes (item_id, title, value) VALUES (?, ?, ?)"
-    for title, value in classes:
-        db.execute(sql, [item_id, title, value])
+    for class_title, class_value in classes:
+        db.execute(sql, [item_id, class_title, class_value])
 
 def add_comment(item_id, user_id, note):
     sql = """INSERT INTO comments (item_id, user_id, note) VALUES (?, ?, ?)"""
@@ -32,7 +32,7 @@ def get_comments(item_id):
              WHERE comments.item_id = ? AND comments.user_id = users.id
              ORDER BY comments.id DESC"""
     return db.query(sql, [item_id])
-    
+
 def get_images(item_id):
     sql = "SELECT id FROM images WHERE item_id = ?"
     return db.query(sql, [item_id])
@@ -73,7 +73,7 @@ def get_item(item_id):
             WHERE items.user_id = users.id AND
                   items.id = ?"""
     result = db.query(sql, [item_id])
-    return result[0] if result else None 
+    return result[0] if result else None
 
 def update_item(item_id, title, description, classes):
     sql = """UPDATE items SET title = ?,
@@ -85,8 +85,8 @@ def update_item(item_id, title, description, classes):
     db.execute(sql, [item_id])
 
     sql = "INSERT INTO item_classes (item_id, title, value) VALUES (?, ?, ?)"
-    for title, value in classes:
-        db.execute(sql, [item_id, title, value])
+    for class_title, class_value in classes:
+        db.execute(sql, [item_id, class_title, class_value])
 
 def remove_item(item_id):
     sql = "DELETE FROM item_classes WHERE item_id = ?"
@@ -97,7 +97,7 @@ def remove_item(item_id):
 
     sql = "DELETE FROM comments WHERE item_id = ?"
     db.execute(sql, [item_id])
-    
+
     sql = "DELETE FROM items WHERE id = ?"
     db.execute(sql, [item_id])
 
