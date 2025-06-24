@@ -114,6 +114,8 @@ def create_comment():
     check_csrf()
 
     note = request.form["note"]
+    if not note:
+        abort(403)
     item_id = request.form["item_id"]
     item = items.get_item(item_id)
     if not item:
@@ -259,7 +261,11 @@ def register():
 @app.route("/create", methods=["POST"])
 def create():
     username = request.form["username"]
+    if not username or len(username) > 30:
+        abort(403)
     password1 = request.form["password1"]
+    if not password1 or len(password1) > 30:
+        abort(403)
     password2 = request.form["password2"]
     if password1 != password2:
         flash("VIRHE: salasanat eivät ole samat")
